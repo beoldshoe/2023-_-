@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 
 class MapPage extends StatefulWidget{
   const MapPage({super.key});
@@ -14,6 +16,9 @@ class _MapPage extends State<MapPage>{
   late GoogleMapController mapController;
   
   LatLng _center = LatLng(35.88804, 128.61135);
+
+  TextEditingController controller = TextEditingController();
+
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -58,14 +63,19 @@ class _MapPage extends State<MapPage>{
           title: const Text('Maps Sample App'),
           backgroundColor: Colors.green[700],
         ),
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition( 
-            target: LatLng(_center.latitude, _center.longitude),
-            zoom: 15.0,
-          ),
+         body: 
+            // GoogleMap Widget
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(_center.latitude, _center.longitude),
+                zoom: 15.0,
+              ),
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
+            ),
+        
         ),
-      ),
     );
   }
 }
