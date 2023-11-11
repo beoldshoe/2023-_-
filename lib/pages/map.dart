@@ -91,41 +91,57 @@ class _MapPage extends State<MapPage>{
     return Container(
       color: Colors.white,
       width: MediaQuery.of(context).size.width*0.5,
+      height: MediaQuery.of(context).size.width*0.14,
       padding: EdgeInsets.fromLTRB(2,2,2,2),
-      child: GooglePlaceAutoCompleteTextField(
-        textEditingController: controller,
-        googleAPIKey: "AIzaSyACnsP52Pv3MYsHCQZK0CvRXB15rK6S014",
-        inputDecoration: InputDecoration(
-          hintText: "검색어를 입력하세요",
-          filled: true,
-          fillColor: Colors.white,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          contentPadding: EdgeInsets.only(left: 8, right: 8), // 내부 여백을 최소화합니다.
-        ),
-        debounceTime: 400,
-        countries: ["kr"],
-        isLatLngRequired: true,
-        getPlaceDetailWithLatLng: (Prediction prediction) {
-          print("placeDetails" + prediction.lat.toString());
-        },
-        itemClick: (Prediction prediction) async {
-          controller.text = prediction.description ?? "";
-        },
-        itemBuilder: (context, index, Prediction prediction) {
-          return Container(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Icon(Icons.location_on),
-                SizedBox(
-                  width: 7,
-                ),
-                Expanded(child: Text("${prediction.description ?? ""}"))
-              ],
-            ),
-          );
-        },
+        child: GooglePlaceAutoCompleteTextField(
+          textEditingController: controller,
+          googleAPIKey: "AIzaSyACnsP52Pv3MYsHCQZK0CvRXB15rK6S014",
+          inputDecoration: InputDecoration(
+            hintText: "검색어를 입력하세요",
+            filled: true,
+            fillColor: Colors.white,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            contentPadding: EdgeInsets.only(left: 8, right: 8), // 내부 여백을 최소화합니다.
+          ),
+          debounceTime: 400,
+          countries: ["kr"],
+          isLatLngRequired: true,
+          getPlaceDetailWithLatLng: (Prediction prediction) {
+            print("placeDetails : " + prediction.lat.toString());
+            print("placeDetails : " + prediction.lng.toString());
+            
+            double lat = double.parse(prediction.lat.toString());
+            double lng = double.parse(prediction.lng.toString());
+
+            // 선택한 위치로 GoogleMap의 카메라를 이동
+            mapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      target: LatLng(lat, lng),
+                      zoom: 15.0,  // 줌 레벨 설정
+                    ),
+                  ),
+                );
+          },
+          
+          itemClick: (Prediction prediction) async {
+            controller.text = prediction.description ?? "";
+          },
+          itemBuilder: (context, index, Prediction prediction) {
+            return Container(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  Icon(Icons.location_on),
+                  SizedBox(
+                    width: 7,
+                  ),
+                  Expanded(child: Text("${prediction.description ?? ""}"))
+                ],
+              ),
+            );
+          },
         isCrossBtnShown: true,
       ),
     );
