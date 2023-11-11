@@ -19,7 +19,6 @@ class _MapPage extends State<MapPage>{
 
   TextEditingController controller = TextEditingController();
 
-
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -60,10 +59,11 @@ class _MapPage extends State<MapPage>{
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Maps Sample App'),
+          title: const Text('연탄 급식소'),
           backgroundColor: Colors.green[700],
         ),
-         body: 
+           body: Stack(
+          children: [
             // GoogleMap Widget
             GoogleMap(
               onMapCreated: _onMapCreated,
@@ -74,9 +74,60 @@ class _MapPage extends State<MapPage>{
               myLocationButtonEnabled: true,
               myLocationEnabled: true,
             ),
-        
+            // Search bar using GooglePlaceAutoCompleteTextField
+            Positioned(
+            top: 0,
+              left: 0,
+              right: MediaQuery.of(context).size.width*0.15,
+              child: placesAutoCompleteTextField(),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget placesAutoCompleteTextField() {
+    return Container(
+      color: Colors.white,
+      width: MediaQuery.of(context).size.width*0.5,
+      padding: EdgeInsets.fromLTRB(2,2,2,2),
+      child: GooglePlaceAutoCompleteTextField(
+        textEditingController: controller,
+        googleAPIKey: "AIzaSyACnsP52Pv3MYsHCQZK0CvRXB15rK6S014",
+        inputDecoration: InputDecoration(
+          hintText: "검색어를 입력하세요",
+          filled: true,
+          fillColor: Colors.white,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          contentPadding: EdgeInsets.only(left: 8, right: 8), // 내부 여백을 최소화합니다.
+        ),
+        debounceTime: 400,
+        countries: ["kr"],
+        isLatLngRequired: true,
+        getPlaceDetailWithLatLng: (Prediction prediction) {
+          print("placeDetails" + prediction.lat.toString());
+        },
+        itemClick: (Prediction prediction) async {
+          controller.text = prediction.description ?? "";
+        },
+        itemBuilder: (context, index, Prediction prediction) {
+          return Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Icon(Icons.location_on),
+                SizedBox(
+                  width: 7,
+                ),
+                Expanded(child: Text("${prediction.description ?? ""}"))
+              ],
+            ),
+          );
+        },
+        isCrossBtnShown: true,
+      ),
     );
   }
 }
-
