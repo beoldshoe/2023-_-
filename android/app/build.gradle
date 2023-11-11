@@ -45,8 +45,8 @@ android {
         applicationId "com.example.biquet_cafeteria"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 20 // 변경 전 : flutter.minSdkVersion
-        targetSdkVersion 30// 변경 전 : flutter.targetSdkVersion
+        minSdkVersion 21 // 변경 전 : flutter.minSdkVersion
+        targetSdkVersion 31// 변경 전 : flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

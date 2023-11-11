@@ -27,9 +27,9 @@ class _MapPage extends State<MapPage>{
         ),
         body: GoogleMap(
           onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
+          initialCameraPosition: CameraPosition( 
             target: _center,
-            zoom: 11.0,
+            zoom: 13.0,
           ),
         ),
       ),
