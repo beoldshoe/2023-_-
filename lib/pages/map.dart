@@ -21,6 +21,9 @@ class _MapPage extends State<MapPage>{
   TextEditingController controller = TextEditingController();
 
   Set<Marker> _markers = {};
+  String selectedDay = '요일';  // 선택한 요일을 저장할 변수
+  String selectedMeal = '식사 시간 / 방법'; 
+  String selectedTarget = '대상 선택'; 
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -35,40 +38,59 @@ class _MapPage extends State<MapPage>{
           itemCount: 9,
           itemBuilder: (BuildContext context, int index) {
             String title;
+            String dayForDb;
             switch (index) {
               case 0:
                 title = '월';
+                dayForDb = '1';
                 break;
               case 1:
                 title = '화';
+                dayForDb = '2';
                 break;
               case 2:
                 title = '수';
+                dayForDb = '3';
                 break;
               case 3:
                 title = '목';
+                dayForDb = '4';
                 break;
               case 4:
                 title = '금';
+                dayForDb = '5';
                 break;
               case 5:
                 title = '토';
+                dayForDb = '6';
                 break;
               case 6:
                 title = '일';
+                dayForDb = '7';
                 break;
               case 7:
                 title = '비정기';
+                dayForDb = '8';
                 break;
               default:
-                title = '전체';
+                title = '요일';
+                dayForDb = '0';
                 break;
             }
             return ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text(title),
               onTap: () {
-                // 선택한 요일에 따른 동작을 구현합니다.
+                setState(() {
+                  selectedDay = title;  // 선택한 요일을 변수에 저장합니다.
+                  _markers.clear();  // 기존의 마커를 모두 지웁니다.
+                  if (dayForDb == '0') {  // '전체'를 선택한 경우 모든 마커를 불러옵니다.
+                    loadMarkers();
+                  } else {  // 특정 요일을 선택한 경우 해당 요일의 마커만 불러옵니다.
+                    loadMarkersByDay(dayForDb);
+                  }
+                });
+                Navigator.pop(context);  // 다이얼로그를 닫습니다.
               },
             );
           },
@@ -77,7 +99,7 @@ class _MapPage extends State<MapPage>{
     );
   }
 
-// 대상 선택 시
+    // 대상 선택 시
   void showTargetPickerDialog() {
     showModalBottomSheet(
       context: context,
@@ -112,14 +134,19 @@ class _MapPage extends State<MapPage>{
                 title = '외국인';
                 break;
               default:
-                title = '전체';
+                title = '대상전체';
                 break;
             }
             return ListTile(
               leading: Icon(Icons.people),
               title: Text(title),
               onTap: () {
-                // 선택한 항목에 따른 동작을 구현합니다.
+                setState(() {
+                  selectedTarget = title;  // 선택한 대상을 변수에 저장합니다.
+                  _markers.clear();  // 기존의 마커를 모두 지웁니다.
+                  loadMarkersByTarget(title);  // 선택한 대상에 해당하는 마커를 불러옵니다.
+                });
+                Navigator.pop(context);  // 다이얼로그를 닫습니다.
               },
             );
           },
@@ -128,83 +155,168 @@ class _MapPage extends State<MapPage>{
     );
   }
 
-// 식사 조건
+// 식사 시간/방법 선택 시
   void showMealPickerDialog() {
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return ListView.builder(
-            itemCount: 5,
-            itemBuilder: (BuildContext context, int index) {
-              String title;
-              switch (index) {
-                case 0:
-                  title = '조식';
-                  break;
-                case 1:
-                  title = '중식';
-                  break;
-                case 2:
-                  title = '석식';
-                  break;
-                case 3:
-                  title = '배달';
-                  break;
-                default:
-                  title = '전체';
-                  break;
-              }
-              return ListTile(
-                leading: Icon(Icons.restaurant),
-                title: Text(title),
-                onTap: () {
-                  // 선택한 항목에 따른 동작을 구현합니다.
-                },
-              );
-            },
-          );
-        },
-      );
-    }
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView.builder(
+          itemCount: 5,
+          itemBuilder: (BuildContext context, int index) {
+            String title;
+            String meal;
+            switch (index) {
+              case 0:
+                title = '조식';
+                meal = "0";
+                break;
+              case 1:
+                title = '중식';
+                meal = "1";
+                break;
+              case 2:
+                title = '석식';
+                meal = "2";
+                break;
+              case 3:
+                title = '배달';
+                meal = "3";
+                break;
+              default:
+                title = '식사 시간/방법';
+                meal = "4";
+                break;
+            }
+            return ListTile(
+              leading: Icon(Icons.restaurant),
+              title: Text(title),
+              onTap: () {
+                setState(() {
+                  selectedMeal = title;  // 선택한 식사 시간/방법에 대응하는 값을 변수에 저장합니다.
+                  _markers.clear();  // 기존의 마커를 모두 지웁니다.
+                  if(meal == '4'){
+                    loadMarkers();
+                  }
+                  else{
+                    loadMarkersByMeal(meal);
+                  }
+                  
+                });
+                Navigator.pop(context);  // 다이얼로그를 닫습니다.
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+  //마커 추가하기
+  void _addMarker(LatLng position, String title, Map<String, dynamic> data) {
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(position.toString()),
+          position: position,
+          infoWindow: InfoWindow(title: title),
+          onTap: () {
+            showDetailsDialog(data);
+          },
+        ));
+    });
+  }
 
-    void _addMarker(LatLng position, String title, Map<String, dynamic> data) {
-      setState(() {
-        _markers.add(
-          Marker(
-            markerId: MarkerId(position.toString()),
-            position: position,
-            infoWindow: InfoWindow(title: title),
-            onTap: () {
-              showDetailsDialog(data);
-            },
-          ));
-      });
-    }
+  // 마커 찍기
+  Future<void> loadMarkers() async {
+    CollectionReference collection = FirebaseFirestore.instance.collection('data');
+    QuerySnapshot querySnapshot = await collection.get();
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data != null) {
+        double lat = double.parse(data['latitude'] ?? '0');
+        double lng = double.parse(data['logitude'] ?? '0');
+        String title = data['facility_name'] ?? '';
+        _addMarker(LatLng(lat, lng), title, data);
+      }
+    });
+    print('All markers: $_markers');
+  }
 
-    // 마커 찍기
-    Future<void> loadMarkers() async {
-      CollectionReference collection = FirebaseFirestore.instance.collection('data');
-      QuerySnapshot querySnapshot = await collection.get();
-      querySnapshot.docs.forEach((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        if (data != null) {
-          double lat = double.parse(data['latitude'] ?? '0');
-          double lng = double.parse(data['logitude'] ?? '0');
-          String title = data['facility_name'] ?? '';
+  //요일별로 마커 찍기
+  Future<void> loadMarkersByDay(String day) async {
+    CollectionReference collection = FirebaseFirestore.instance.collection('data');
+    QuerySnapshot querySnapshot = await collection.where('day_for_db', isGreaterThanOrEqualTo: day).get();
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data != null) {
+        double lat = double.parse(data['latitude'] ?? '0');
+        double lng = double.parse(data['logitude'] ?? '0');
+        String title = data['facility_name'] ?? '';
+        String dayForDb = data['day_for_db'] ?? '';
+        if (dayForDb.contains(day)) {  // 선택한 요일이 day_for_db에 포함되어 있으면 마커를 추가합니다.
           _addMarker(LatLng(lat, lng), title, data);
         }
-      });
-      print('All markers: $_markers');
+      }
+    });
+    print('All markers: $_markers');
+  }
+
+  //대상별로 마커 찍기
+  Future<void> loadMarkersByTarget(String target) async {
+    CollectionReference collection = FirebaseFirestore.instance.collection('data');
+    QuerySnapshot querySnapshot;
+
+    if (target == '대상전체') {
+      querySnapshot = await collection.get();  // 대상전체를 선택한 경우 모든 문서를 가져옵니다.
+    } else {
+      querySnapshot = await collection.where('target_for_db', isEqualTo: target).get();  // 특정 대상을 선택한 경우 해당 대상을 포함하는 문서만 가져옵니다.
     }
 
-    // 현재 위치 받아오기
-    Future<Position> getLocation() async {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
-      return position;
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data != null) {
+        double lat = double.parse(data['latitude'] ?? '0');
+        double lng = double.parse(data['logitude'] ?? '0');
+        String title = data['facility_name'] ?? '';
+        _addMarker(LatLng(lat, lng), title, data);
+      }
+    });
+    print('All markers: $_markers');
+  }
+
+  // 현재 위치 받아오기
+  Future<Position> getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+    return position;
+  }
+
+  //식사 시간/방법별로 마커 찍기
+  Future<void> loadMarkersByMeal(String meal) async {
+    CollectionReference collection = FirebaseFirestore.instance.collection('data');
+    QuerySnapshot querySnapshot;
+
+    if (meal == '식사 시간/방법') { // '식사 시간/방법'을 선택한 경우 모든 문서를 가져옵니다.
+      querySnapshot = await collection.get();  
+    } else {
+      querySnapshot = await collection.where('time_for_db', isGreaterThanOrEqualTo: meal).get();  // 특정 식사 시간/방법을 선택한 경우 해당 식사 시간/방법 이상인 값을 가지는 문서를 가져옵니다.
     }
 
-    // 상세 내용 보여주기
-    void showDetailsDialog(Map<String, dynamic> data) {
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data != null) {
+        double lat = double.parse(data['latitude'] ?? '0');
+        double lng = double.parse(data['logitude'] ?? '0');
+        String title = data['facility_name'] ?? '';
+        String timeForDb = data['time_for_db'] ?? '';
+        if (timeForDb == meal) {  // 선택한 식사 시간/방법에 대응하는 값만 마커를 추가합니다.
+          _addMarker(LatLng(lat, lng), title, data);
+        }
+      }
+    });
+    print('All markers: $_markers');
+  }
+
+  // 상세 내용 보여주기
+  void showDetailsDialog(Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (context) {
@@ -244,7 +356,7 @@ class _MapPage extends State<MapPage>{
   }
 
 
-// 현재위치 가져옴
+  // 현재위치 가져옴
   Future<void> _loadLocation() async {
     // 권한이 부여되었는지 확인
     var status = await Permission.location.status;
@@ -272,7 +384,7 @@ class _MapPage extends State<MapPage>{
           title: const Text('연탄 급식소'),
           backgroundColor: Colors.green[700],
         ),
-           body: Stack(
+          body: Stack(
           children: [
             // GoogleMap Widget
             GoogleMap(
@@ -292,7 +404,7 @@ class _MapPage extends State<MapPage>{
               right: MediaQuery.of(context).size.width*0.15,
               child: placesAutoCompleteTextField(),
             ),
-           // Elevator buttons
+          // Elevator buttons
           Positioned(
             top: MediaQuery.of(context).size.width*0.14,
             left: 0,
@@ -302,19 +414,19 @@ class _MapPage extends State<MapPage>{
               children: [
                 ElevatedButton(
                   onPressed: showDayPickerDialog,  // '요일' 버튼을 누르면 요일 선택 다이얼로그가 표시됩니다.
-                  child: Text('요일'),
+                  child: Text(selectedDay),  // 버튼의 텍스트를 선택한 요일로 설정합니다.
                 ),
 
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: showTargetPickerDialog,  // '대상 선택' 버튼을 누르면 대상 선택 다이얼로그가 표시됩니다.
-                  child: Text('대상 선택'),
+                  child: Text(selectedTarget),
                 ),
 
                 SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: showMealPickerDialog,  // '대상 선택' 버튼을 누르면 대상 선택 다이얼로그가 표시됩니다.
-                  child: Text('식사 시간 / 방법'),
+                  onPressed: showMealPickerDialog,  // '식사 tlr' 버튼을 누르면 대상 선택 다이얼로그가 표시됩니다.
+                  child: Text(selectedMeal),
                 ),
               ],
             ),
@@ -323,7 +435,7 @@ class _MapPage extends State<MapPage>{
       ),
     ),
   );
-}
+  }
 
   Widget placesAutoCompleteTextField() {
     return Container(
