@@ -1,31 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   const Settings({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  _SettingsState createState() => _SettingsState();
+}
 
+class _SettingsState extends State<Settings> {
+  User? user;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('설정 페이지'),
       ),
       body: Center(
-        child: ElevatedButton(
-        child: Text('Google Account Login'),
-    onPressed: () {
-      signInWithGoogle();
-    }
-        ),
-
+        child: user == null
+            ? ElevatedButton(
+          child: Text('Google Account Login'),
+          onPressed: signInWithGoogle,
+        )
+            : Text('환영합니다, ${user!.displayName}님!'),
       ),
     );
   }
-  Future<UserCredential> signInWithGoogle() async {
+
+  Future<void> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
     final credential = GoogleAuthProvider.credential(
@@ -41,7 +46,8 @@ class Settings extends StatelessWidget {
       'name': userCredential.user!.displayName,
     });
 
-    return userCredential;
+    setState(() {
+      user = userCredential.user;
+    });
   }
 }
-
