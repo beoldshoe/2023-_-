@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapPage extends StatefulWidget{
   const MapPage({super.key});
@@ -19,8 +20,36 @@ class _MapPage extends State<MapPage>{
 
   TextEditingController controller = TextEditingController();
 
+  Set<Marker> _markers = {};
+
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  void _addMarker(LatLng position, String title) {
+  setState(() {
+    _markers.add(
+      Marker(
+      markerId: MarkerId(position.toString()),
+      position: position,
+      infoWindow: InfoWindow(title: title),
+    ));
+    });
+  }
+
+  Future<void> loadMarkers() async {
+    CollectionReference collection = FirebaseFirestore.instance.collection('data');
+    QuerySnapshot querySnapshot = await collection.get();
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data != null) {
+        double lat = double.parse(data['latitude'] ?? '0');
+        double lng = double.parse(data['logitude'] ?? '0');
+        String title = data['facility_name'] ?? '';
+        _addMarker(LatLng(lat, lng), title);
+      }
+    });
+    print('All markers: $_markers');
   }
 
   Future<Position> getLocation() async {
@@ -28,11 +57,14 @@ class _MapPage extends State<MapPage>{
     return position;
   }
 
+
   @override
   void initState() {
     super.initState();
     _loadLocation();
+    loadMarkers();
   }
+
 
 // 현재위치 가져옴
   Future<void> _loadLocation() async {
@@ -73,6 +105,7 @@ class _MapPage extends State<MapPage>{
               ),
               myLocationButtonEnabled: true,
               myLocationEnabled: true,
+              markers: _markers,
             ),
             // Search bar using GooglePlaceAutoCompleteTextField
             Positioned(
