@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "34058484055",
+    "project_id": "biquet-cafeteria-3c689",
+    "storage_bucket": "biquet-cafeteria-3c689.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34058484055:android:8eb075300d03075d7e2612",
+        "android_client_info": {
+          "package_name": "com.example.biquet_cafeteria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9wyQzSCiv_bt_YEPk4loy8DDur_E46hI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
