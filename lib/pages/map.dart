@@ -381,9 +381,14 @@ class _MapPage extends State<MapPage>{
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('연탄 급식소'),
-          backgroundColor: Colors.green[700],
-        ),
+              title: Text(
+                '연탄 급식소',
+                style: TextStyle(
+                  color: Colors.black,  // 글씨 색깔을 검은색으로 설정
+                ),
+              ),
+          backgroundColor: Color(0xFFF7F2FA),  // AppBar의 색상을 #F7F2FA로 설정
+          ),
           body: Stack(
           children: [
             // GoogleMap Widget

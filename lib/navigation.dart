@@ -24,7 +24,7 @@ class _NavigationState extends State<Navigation>{
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.map), 
-            label: "Map",
+            label: "지도",
             selectedIcon: Icon(
               Icons.map,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -32,7 +32,7 @@ class _NavigationState extends State<Navigation>{
             ),
             NavigationDestination(
             icon: const Icon(Icons.list), 
-            label: "List",
+            label: "지역별 급식소 목록",
             selectedIcon: Icon(
               Icons.list,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -40,7 +40,7 @@ class _NavigationState extends State<Navigation>{
             ),
             NavigationDestination(
             icon: const Icon(Icons.settings), 
-            label: "Settings",
+            label: "계정",
             selectedIcon: Icon(
               Icons.settings,
               color: Theme.of(context).colorScheme.onSecondaryContainer,

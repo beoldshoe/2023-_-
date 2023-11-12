@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
-        android:label="biquet_cafeteria"
+        android:label="연탄급식소"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

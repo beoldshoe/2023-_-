@@ -12,6 +12,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   User? user;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +23,25 @@ class _SettingsState extends State<Settings> {
       body: Center(
         child: user == null
             ? ElevatedButton(
-          child: Text('Google Account Login'),
-          onPressed: signInWithGoogle,
-        )
-            : Text('환영합니다, ${user!.displayName}님!'),
+              child: Text('Google Account Login'),
+              onPressed: signInWithGoogle,
+            )
+            : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('환영합니다, ${user!.displayName}님!'),
+                ElevatedButton(
+                  child: Text('로그아웃'),
+                  onPressed: signOut,
+                ),
+              ],
+            ),
       ),
     );
   }
 
   Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
@@ -48,6 +58,15 @@ class _SettingsState extends State<Settings> {
 
     setState(() {
       user = userCredential.user;
+    });
+  }
+
+  Future<void> signOut() async {
+    await _googleSignIn.signOut();
+    await FirebaseAuth.instance.signOut();
+
+    setState(() {
+      user = null;
     });
   }
 }
