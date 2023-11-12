@@ -1,13 +1,23 @@
 {
   "project_info": {
+<<<<<<< HEAD
     "project_number": "903406229735",
     "project_id": "biquetcafeteria",
     "storage_bucket": "biquetcafeteria.appspot.com"
+=======
+    "project_number": "34058484055",
+    "project_id": "biquet-cafeteria-3c689",
+    "storage_bucket": "biquet-cafeteria-3c689.appspot.com"
+>>>>>>> 6ea37aa19ec48d899432a32186dcc257cff9816a
   },
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD
         "mobilesdk_app_id": "1:903406229735:android:6f67b06fc470dfad7faa42",
+=======
+        "mobilesdk_app_id": "1:34058484055:android:8eb075300d03075d7e2612",
+>>>>>>> 6ea37aa19ec48d899432a32186dcc257cff9816a
         "android_client_info": {
           "package_name": "com.example.biquet_cafeteria"
         }
@@ -15,7 +25,11 @@
       "oauth_client": [],
       "api_key": [
         {
+<<<<<<< HEAD
           "current_key": "AIzaSyAkYgWLfNsxIND3FsWFn1d_IeS6wdH4kX4"
+=======
+          "current_key": "AIzaSyC9wyQzSCiv_bt_YEPk4loy8DDur_E46hI"
+>>>>>>> 6ea37aa19ec48d899432a32186dcc257cff9816a
         }
       ],
       "services": {

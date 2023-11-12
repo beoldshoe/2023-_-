@@ -26,14 +26,17 @@ class _MapPage extends State<MapPage>{
     mapController = controller;
   }
 
-  void _addMarker(LatLng position, String title) {
-  setState(() {
-    _markers.add(
-      Marker(
-      markerId: MarkerId(position.toString()),
-      position: position,
-      infoWindow: InfoWindow(title: title),
-    ));
+  void _addMarker(LatLng position, String title, Map<String, dynamic> data) {
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(position.toString()),
+          position: position,
+          infoWindow: InfoWindow(title: title),
+          onTap: () {
+            showDetailsDialog(data);
+          },
+        ));
     });
   }
 
@@ -46,7 +49,7 @@ class _MapPage extends State<MapPage>{
         double lat = double.parse(data['latitude'] ?? '0');
         double lng = double.parse(data['logitude'] ?? '0');
         String title = data['facility_name'] ?? '';
-        _addMarker(LatLng(lat, lng), title);
+        _addMarker(LatLng(lat, lng), title, data);
       }
     });
     print('All markers: $_markers');
@@ -57,6 +60,37 @@ class _MapPage extends State<MapPage>{
     return position;
   }
 
+  void showDetailsDialog(Map<String, dynamic> data) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(data['facility_name'] ?? ''),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('주소: ' + (data['address'] ?? '')),
+              Text('운영 기관: ' + (data['operating_institution'] ?? '')),
+              Text('전화번호: ' + (data['phone_number'] ?? '전화번호 정보 없음')),
+              Text('대상: ' + (data['target'] ?? '')),
+              Text('시간: ' + (data['time'] ?? '')),
+              Text('요일: ' + (data['day'] ?? '')),
+              Text('제공자: ' + (data['provider'] ?? '')),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('닫기'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   void initState() {
