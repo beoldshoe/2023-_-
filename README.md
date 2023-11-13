@@ -11,7 +11,7 @@
 ### 📚 프로젝트에 활용된 기술 
 - 프레임워크 : Flutter 사용
   - 안드로이드와 ios 앱 개발을 위해 flutter 사용
-  - 개발환경으로 vscod 및 androidstudio 사용
+  - 개발환경으로 vscode 및 android studio 사용
     <br/> <br/> 
     [vscode]
     <br/> <br/> 
@@ -42,13 +42,25 @@
 <br/> <br/>
   ![image](https://github.com/beoldshoe/2023_hackathon_biquet-cafeteria/assets/107935469/12a1c97d-21bb-4ae0-b907-9a5537a6d431)
 <br/> <br/>
+  - firebase를 통한 구글 로그인 구현
+  <br/> <br/>
+    [구글 로그인을 통해 firebase에 저장된 사용자 정보]
+  <br/> <br/>
+    ![image](https://github.com/beoldshoe/2023_hackathon_biquet-cafeteria/assets/107935469/93db68b5-256a-4049-bf1b-fc8605a13430)
+  <br/> <br/>
+  [구글 로그인 코드 -  pages/settings.dart]
 <br/> <br/>
+  ![image](https://github.com/beoldshoe/2023_hackathon_biquet-cafeteria/assets/107935469/68fc97a6-19af-4b6f-9667-25d696ae5abd)
+  ![image](https://github.com/beoldshoe/2023_hackathon_biquet-cafeteria/assets/107935469/283a27f8-424b-42a9-977b-35422d648e14)
+<br/> <br/>
+
 - 지도를 구현하기 위해 Google Map API 및 Google Places API 를 활용
 <br/> <br/>
 [Google Map API]
 <br/> <br/> 
     <img src = "https://github.com/beoldshoe/2023_hackathon_biquet-cafeteria/assets/107935469/dafc8d5e-a75d-4b8c-ad10-0542828a2cde">
-<br/> <br/> 
+<br/> <br/>
+
   - 지도 불러오기
   - google map 자동완성검색창 구현 및 검색한 위치로 지도 중심 이동
   - GPS기능 구현으로 현재 위치로 이동 가능
